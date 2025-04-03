@@ -26,10 +26,6 @@ public class GravityController
     {
         int gridWidth = gridManager.GridWidth;
         int gridHeight = gridManager.GridHeight;
-        
-        // Daha hızlı animasyon için hız çarpanı
-        float speedMultiplier = 1.2f; // Animasyonları biraz hızlandır
-        fallSpeed *= speedMultiplier;
 
         // Grid boyunca her sütunu ve satırı kontrol ediyoruz.
         for (int x = 0; x < gridWidth; x++)
@@ -95,15 +91,6 @@ public class GravityController
                                 
                             seq.Append(itemTransform.DOMove(bounceUpPos, duration * 0.2f)
                                 .SetEase(Ease.OutQuad));
-                            
-                            // Animasyonun son kısmı başladığında da eşleşme kontrolü yap (gecikmeyi azaltmak için)
-                            seq.AppendCallback(() => {
-                                // Kontrol sürecini erken başlat
-                                if (blastController != null)
-                                {
-                                    blastController.CheckGroupsAroundPosition(itemReference.GridPosition);
-                                }
-                            });
                                 
                             seq.Append(itemTransform.DOMove(targetPos, duration * 0.2f)
                                 .SetEase(Ease.InOutQuad));
