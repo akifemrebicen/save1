@@ -15,10 +15,15 @@ public class LevelSceneManager : MonoBehaviour
     [SerializeField] private float cellSpacing = 5f;
     [SerializeField] private float padding = 20f;
 
-    [Header("Gravity Settings")]
+    [Header("Settings")]
     [SerializeField] private float gravityFallSpeed = 5.0f;
-
+    
     private GridManager gridManager;
+    private GravityController gravityController;
+    private BlastController blastController;
+    
+    private int gridWidth;
+    private int gridHeight;
 
     private void Start()
     {
@@ -29,16 +34,37 @@ public class LevelSceneManager : MonoBehaviour
             Debug.LogError("❌ Level data could not be loaded.");
             return;
         }
-
+        gridWidth = data.grid_width;
+        gridHeight = data.grid_height;
+        
         var resizer = new GridBackgroundResizer(backgroundRect, cellSize, padding);
-        resizer.Resize(data.grid_width, data.grid_height);
-
+        resizer.Resize(gridWidth, gridHeight);
+        
+        // GridManager'ı başlat
         gridManager = new GridManager(
-            cubePrefabs, boxPrefab, stonePrefab, vasePrefab,
-            gridParent, cellSize, cellSpacing, backgroundRect
+            cubePrefabs, 
+            boxPrefab, 
+            stonePrefab, 
+            vasePrefab, 
+            gridParent, 
+            cellSize, 
+            cellSpacing, 
+            backgroundRect
         );
         gridManager.CreateGrid(data);
-        gridManager.CheckAndHintGroups();
+        
+        // Diğer kontrolcüleri başlat
+        blastController = new BlastController(gridManager);
+        gravityController = new GravityController(gridManager);
+        
+        // Kontrolcüler arası bağlantıları kur
+        gravityController.SetBlastController(blastController);
+        
+        // Gravity Controller'ın event'ini dinle
+        gravityController.OnCubeAnimationComplete += OnCubeAnimationComplete;
+        
+        // Başlangıçta ipuçlarını göster
+        blastController.CheckAndHintGroups();
     }
 
     private void Update()
@@ -52,7 +78,8 @@ public class LevelSceneManager : MonoBehaviour
                 Cube cube = hit.collider.GetComponent<Cube>();
                 if (cube != null)
                 {
-                    var connectedCubes = gridManager.FindConnectedCubes(cube);
+                    // Bağlantılı küpleri bul (BlastController kullanarak)
+                    var connectedCubes = blastController.FindConnectedCubes(cube);
                     if (connectedCubes.Count >= 2)
                     {
                         foreach (var c in connectedCubes)
@@ -60,11 +87,31 @@ public class LevelSceneManager : MonoBehaviour
                             c.OnTapped();
                             gridManager.RemoveGridItemAt(c.GridPosition);
                         }
+                        
+                        // Yerçekimi uygula (GravityController kullanarak)
+                        gravityController.ApplyGravity(gravityFallSpeed);
+                        
+                        // NOT: Artık burada CheckAndHintGroups çağrılmıyor.
+                        // Küpler düştükten sonra otomatik olarak kontrol edilecek
                     }
-                    gridManager.ApplyGravity(gravityFallSpeed);
-                    gridManager.CheckAndHintGroups();
                 }
             }
+        }
+    }
+    
+    // Küp animasyonu tamamlandığında çağrılacak callback
+    private void OnCubeAnimationComplete(GridItem item, Vector2Int position)
+    {
+        // Callback sadece kaydediliyor, gerekirse burada ek işlemler yapılabilir
+    }
+    
+    private void OnDestroy()
+    {
+        // Event aboneliğini kaldır
+        if (gravityController != null)
+        {
+            gravityController.OnCubeAnimationComplete -= OnCubeAnimationComplete;
+            gravityController.CleanupTweens();
         }
     }
 }
