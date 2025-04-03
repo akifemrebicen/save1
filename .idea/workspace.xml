@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c86404d8-fac2-473b-a0f7-560d041cb0cb" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/DefaultState/blue.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/DefaultState/blue.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/DefaultState/green.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/DefaultState/green.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/DefaultState/red.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/DefaultState/red.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/DefaultState/yellow.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/DefaultState/yellow.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/Particles/particle_blue.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/Particles/particle_blue.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/Particles/particle_green.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/Particles/particle_green.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/Particles/particle_red.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/Particles/particle_red.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/Particles/particle_yellow.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/Particles/particle_yellow.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/RocketState/blue_rocket.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/RocketState/blue_rocket.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/RocketState/green_rocket.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/RocketState/green_rocket.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/RocketState/red_rocket.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/RocketState/red_rocket.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/RocketState/yellow_rocket.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Cubes/RocketState/yellow_rocket.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Menu/background.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Menu/background.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Box/Particles/particle_box_01.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Box/Particles/particle_box_01.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Box/Particles/particle_box_02.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Box/Particles/particle_box_02.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Box/Particles/particle_box_03.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Box/Particles/particle_box_03.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Box/box.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Box/box.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Stone/Particles/particle_stone_01.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Stone/Particles/particle_stone_01.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Stone/Particles/particle_stone_02.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Stone/Particles/particle_stone_02.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Stone/Particles/particle_stone_03.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Stone/Particles/particle_stone_03.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Stone/stone.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Stone/stone.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Vase/Particles/particle_vase_01.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Vase/Particles/particle_vase_01.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Vase/Particles/particle_vase_02.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Vase/Particles/particle_vase_02.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Vase/Particles/particle_vase_03.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Vase/Particles/particle_vase_03.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Vase/vase_01.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Vase/vase_01.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Vase/vase_02.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Obstacles/Vase/vase_02.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/Particles/particle_smoke.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/Particles/particle_smoke.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/Particles/particle_star.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/Particles/particle_star.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/horizontal_rocket.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/horizontal_rocket.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/horizontal_rocket_part_left.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/horizontal_rocket_part_left.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/horizontal_rocket_part_right.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/horizontal_rocket_part_right.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/vertical_rocket.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/vertical_rocket.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/vertical_rocket_part_bottom.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/vertical_rocket_part_bottom.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/vertical_rocket_part_top.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/Rocket/vertical_rocket_part_top.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Celebration/Particles/additive_particle_star.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Celebration/Particles/additive_particle_star.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Celebration/star.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Celebration/star.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Popup/close_button.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Popup/close_button.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Popup/popup_base.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Popup/popup_base.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Popup/popup_ribbon.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Popup/popup_ribbon.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Top/goal_check.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Top/goal_check.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Top/top_ui.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/CaseStudyAssets2025/UI/Gameplay/Top/top_ui.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ShaderGraphSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ShaderGraphSettings.asset" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 1
+}]]></component>
+  <component name="ProjectId" id="2vDNNX8Nm92GqHkC92QFYXWmzt1" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c86404d8-fac2-473b-a0f7-560d041cb0cb" name="Changes" comment="" />
+      <created>1743675645338</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1743675645338</updated>
+      <workItem from="1743675648220" duration="144000" />
+    </task>
+    <servers />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="UnityProjectDiscoverer">
+    <option name="unityProjectFolder" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+</project>
