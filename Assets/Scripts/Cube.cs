@@ -12,7 +12,6 @@ public class Cube : GridItem
     [SerializeField] private GameObject lightEffect;
 
     private SpriteRenderer spriteRenderer;
-    private bool isHinted = false;
 
     public override bool CanFall => true;
 
@@ -31,14 +30,12 @@ public class Cube : GridItem
 
     public void SetHintedForm()
     {
-        isHinted = true;
         if (hintedSprite != null)
             spriteRenderer.sprite = hintedSprite;
     }
 
     public void SetNormalForm()
     {
-        isHinted = false;
         if (normalSprite != null)
             spriteRenderer.sprite = normalSprite;
     }
