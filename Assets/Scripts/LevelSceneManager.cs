@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class LevelSceneManager : MonoBehaviour
 {
@@ -17,11 +18,12 @@ public class LevelSceneManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private float gravityFallSpeed = 5.0f;
-    
+
     private GridManager gridManager;
     private GravityController gravityController;
     private BlastController blastController;
-    
+    private SpawnController spawnController;  // SpawnController referansı
+
     private int gridWidth;
     private int gridHeight;
 
@@ -29,42 +31,46 @@ public class LevelSceneManager : MonoBehaviour
     {
         int level = PlayerPrefs.GetInt("LastPlayedLevel", 0) + 1;
         LevelData data = LevelLoader.LoadLevel(level);
+
         if (data == null)
         {
             Debug.LogError("❌ Level data could not be loaded.");
             return;
         }
+
         gridWidth = data.grid_width;
         gridHeight = data.grid_height;
-        
+
         var resizer = new GridBackgroundResizer(backgroundRect, cellSize, padding);
         resizer.Resize(gridWidth, gridHeight);
-        
+
         // GridManager'ı başlat
         gridManager = new GridManager(
-            cubePrefabs, 
-            boxPrefab, 
-            stonePrefab, 
-            vasePrefab, 
-            gridParent, 
-            cellSize, 
-            cellSpacing, 
+            cubePrefabs,
+            boxPrefab,
+            stonePrefab,
+            vasePrefab,
+            gridParent,
+            cellSize,
+            cellSpacing,
             backgroundRect
         );
         gridManager.CreateGrid(data);
-        
+
+        // SpawnController'ı başlat
+        spawnController = new SpawnController(gridManager, cubePrefabs, gridParent);
+
         // Diğer kontrolcüleri başlat
         blastController = new BlastController(gridManager);
         gravityController = new GravityController(gridManager);
-        
+
         // Kontrolcüler arası bağlantıları kur
         gravityController.SetBlastController(blastController);
-        
-        // Gravity Controller'ın event'ini dinle
-        gravityController.OnCubeAnimationComplete += OnCubeAnimationComplete;
-        
         // Başlangıçta ipuçlarını göster
         blastController.CheckAndHintGroups();
+        
+        // İlk grid durumunu logla
+        LogGridState("Initial Grid State:");
     }
 
     private void Update()
@@ -73,6 +79,7 @@ public class LevelSceneManager : MonoBehaviour
         {
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
+
             if (hit.collider != null)
             {
                 Cube cube = hit.collider.GetComponent<Cube>();
@@ -80,38 +87,60 @@ public class LevelSceneManager : MonoBehaviour
                 {
                     // Bağlantılı küpleri bul (BlastController kullanarak)
                     var connectedCubes = blastController.FindConnectedCubes(cube);
+
                     if (connectedCubes.Count >= 2)
                     {
+                        // Patlama öncesi grid durumunu logla
+                        LogGridState("Before Explosion:");
+
                         foreach (var c in connectedCubes)
                         {
                             c.OnTapped();
                             gridManager.RemoveGridItemAt(c.GridPosition);
                         }
-                        
+
+                        // Patlama sonrası grid durumunu logla
+                        LogGridState("After Explosion:");
+
                         // Yerçekimi uygula (GravityController kullanarak)
                         gravityController.ApplyGravity(gravityFallSpeed);
                         
-                        // NOT: Artık burada CheckAndHintGroups çağrılmıyor.
-                        // Küpler düştükten sonra otomatik olarak kontrol edilecek
+                        // Hemen yeni küpleri spawn et - gravity bitmesini bekleme
+                        spawnController.SpawnNewCubes();
+                        
+                        // Belirli bir süre sonra ipuçlarını yeniden kontrol et
+                        StartCoroutine(CheckHintsAfterDelay());
                     }
                 }
             }
         }
     }
-    
-    // Küp animasyonu tamamlandığında çağrılacak callback
-    private void OnCubeAnimationComplete(GridItem item, Vector2Int position)
+
+    // Yeni bir coroutine ekleyin - bu sadece ipuçları için biraz gecikme ekler
+    private IEnumerator CheckHintsAfterDelay()
     {
-        // Callback sadece kaydediliyor, gerekirse burada ek işlemler yapılabilir
+        // Tüm düşme animasyonlarının bitmesi için yeterli süre bekleyin
+        // max(gravityFallSpeed, spawnController.fallSpeed) + küçük bir tampon
+        yield return new WaitForSeconds(Mathf.Max(gravityFallSpeed, 1.0f) + 0.2f);
+        
+        // İpuçlarını kontrol et ve göster
+        blastController.CheckAndHintGroups();
     }
-    
-    private void OnDestroy()
+
+    // Grid'in mevcut durumunu loglayan yardımcı metod
+    private void LogGridState(string message)
     {
-        // Event aboneliğini kaldır
-        if (gravityController != null)
+        Debug.Log(message);
+
+        for (int y = 0; y < gridManager.GridHeight; y++)
         {
-            gravityController.OnCubeAnimationComplete -= OnCubeAnimationComplete;
-            gravityController.CleanupTweens();
+            string rowLog = "";
+            for (int x = 0; x < gridManager.GridWidth; x++)
+            {
+                GridItem item = gridManager.GetGridItemAt(new Vector2Int(x, y));
+                rowLog += item != null ? $"{item.gameObject.name} " : "Empty ";
+            }
+            Debug.Log($"Row {y}: {rowLog}");
         }
     }
 }
