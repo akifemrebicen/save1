@@ -23,6 +23,6 @@ public class GridBackgroundResizer
         background.sizeDelta = new Vector2(w, h);
 
         // Center the background (ensure its pivot is (0.5, 0.5))
-        background.anchoredPosition = Vector2.zero;
+        background.anchoredPosition = new Vector2(0,-150);
     }
 }
