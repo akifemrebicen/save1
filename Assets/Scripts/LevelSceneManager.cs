@@ -70,7 +70,7 @@ public class LevelSceneManager : MonoBehaviour
         blastController.CheckAndHintGroups();
         
         // İlk grid durumunu logla
-        LogGridState("Initial Grid State:");
+        //LogGridState("Initial Grid State:");
     }
 
     private void Update()
@@ -87,20 +87,24 @@ public class LevelSceneManager : MonoBehaviour
                 {
                     // Bağlantılı küpleri bul (BlastController kullanarak)
                     var connectedCubes = blastController.FindConnectedCubes(cube);
-
+                    var color = cube.GetColor();
+                    Debug.Log($"Tapped color = {color}");
                     if (connectedCubes.Count >= 2)
                     {
+                        
                         // Patlama öncesi grid durumunu logla
-                        LogGridState("Before Explosion:");
+                        //LogGridState("Before Explosion:");
 
                         foreach (var c in connectedCubes)
                         {
+                            var color2 = c.GetColor();
+                            Debug.Log($"Connected colors = {color2}");
                             c.OnTapped();
                             gridManager.RemoveGridItemAt(c.GridPosition);
                         }
 
                         // Patlama sonrası grid durumunu logla
-                        LogGridState("After Explosion:");
+                        //LogGridState("After Explosion:");
 
                         // Yerçekimi uygula (GravityController kullanarak)
                         gravityController.ApplyGravity(gravityFallSpeed);

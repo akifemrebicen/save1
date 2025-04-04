@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
-using DG.Tweening; // DOTween kullanımı için
+using DG.Tweening;
 
 public class SpawnController
 {
@@ -13,10 +13,7 @@ public class SpawnController
 
     // Spawn ayarları
     private float spawnYOffset = 5f;   // Hedefin üstünde spawn offset
-    private float fallSpeed = 1.0f;      // Küplerin hedefe düşme animasyon süresi
-
-    // FallSpeed property - dışarıdan erişim için
-    public float FallSpeed { get { return fallSpeed; } }
+    private float fallSpeed = 5.0f;      // Küplerin hedefe düşme animasyon süresi
 
     // Constructor: gridManager, prefab dizisi ve gridParent parametrelerini alır.
     public SpawnController(GridManager grid, GameObject[] cubes, Transform gridParent)
@@ -57,8 +54,11 @@ public class SpawnController
                     // Spawn pozisyonu: hedef pozisyonun üstüne spawnYOffset ekleyerek spawnlanma noktasını belirliyoruz
                     Vector3 spawnPos = worldPos + Vector3.up * spawnYOffset;
 
-                    // Rastgele bir küp prefab'ı seç
-                    GameObject prefab = GetRandomCubePrefab();
+                    // Rastgele bir küp prefab'ı ve renk seç
+                    int prefabIndex = Random.Range(0, cubePrefabs.Length);
+                    GameObject prefab = cubePrefabs[prefabIndex];
+                    Cube.ColorType colorToAssign = (Cube.ColorType)prefabIndex;
+                    
                     if(prefab == null)
                         continue;
 
@@ -70,6 +70,15 @@ public class SpawnController
                     if (gridItem != null)
                     {
                         gridItem.GridPosition = gridPos;
+                        
+                        // Cube tipinde ise renk ataması yap
+                        Cube cube = gridItem as Cube;
+                        if (cube != null)
+                        {
+                            cube.SetColor(colorToAssign);
+                            Debug.Log($"Spawned new cube at {gridPos} with color: {colorToAssign}");
+                        }
+                        
                         gridManager.SetGridItemAt(gridPos, gridItem);
                     }
 
@@ -80,23 +89,44 @@ public class SpawnController
         }
     }
 
-    // Rastgele bir küp prefab'ı döndürür
-    private GameObject GetRandomCubePrefab()
-    {
-        if (cubePrefabs != null && cubePrefabs.Length > 0)
-        {
-            int index = Random.Range(0, cubePrefabs.Length);
-            return cubePrefabs[index];
-        }
-        return null;
-    }
-
-    // Küpü DOTween ile hedef pozisyona doğru hareket ettirir
+    // Küpü spawn pozisyonundan hedef pozisyona DOTween ile hareket ettirir (GravityController ile aynı animasyon)
     private void AnimateCubeFall(GameObject cube, Vector3 targetPos)
     {
-        cube.transform.DOMove(targetPos, fallSpeed).SetEase(Ease.InQuad).OnComplete(() =>
-        {
-            // Animasyon tamamlandığında isteğe bağlı ek işlemler yapılabilir.
+        GridItem gridItem = cube.GetComponent<GridItem>();
+        if (gridItem == null) return;
+        
+        // Şu anki pozisyon (spawn pozisyonu) ile hedef arasındaki mesafe
+        Vector3 spawnPos = cube.transform.position; // Küp zaten spawn pozisyonunda oluşturuldu
+        float distance = Vector3.Distance(spawnPos, targetPos);
+        // Her küp için animasyon süresi; süre = mesafe / hız
+        float duration = distance / fallSpeed;
+
+        // Toon Blast tarzı sekme animasyonu için değerler:
+        float overshootDistance = 0.3f;
+        float bounceUpDistance = 0.2f;
+
+        Vector3 overshootPos = targetPos + new Vector3(0, -overshootDistance, 0);
+        Vector3 bounceUpPos = targetPos + new Vector3(0, bounceUpDistance, 0);
+
+        // Strong reference to the transform
+        Transform itemTransform = cube.transform;
+        
+        // Tween sırası: Spawn Pos → Overshoot → Bounce Up → Settle
+        Sequence seq = DOTween.Sequence();
+        
+        // Spawn pozisyonundan overshoot pozisyonuna
+        seq.Append(itemTransform.DOMove(overshootPos, duration * 0.6f)
+            .SetEase(Ease.InQuad));
+            
+        seq.Append(itemTransform.DOMove(bounceUpPos, duration * 0.2f)
+            .SetEase(Ease.OutQuad));
+            
+        seq.Append(itemTransform.DOMove(targetPos, duration * 0.2f)
+            .SetEase(Ease.InOutQuad));
+            
+        // Animasyon tamamlandığında yapılacak işlemler
+        seq.OnComplete(() => {
+            // Animasyon tamamlandığında isteğe bağlı ek işlemler yapılabilir
         });
     }
 }

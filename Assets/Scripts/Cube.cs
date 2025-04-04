@@ -44,7 +44,7 @@ public class Cube : GridItem
     {
         // Tweenleri temizleyelim ki, yok edilen nesnelerde tween kalmasın.
         transform.DOKill();
-        Debug.Log($"Tapped cube at {GridPosition} with color {cubeColor}");
+        //Debug.Log($"Tapped cube at {GridPosition} with color {cubeColor}");
         if (crackEffect != null)
         {
             Instantiate(crackEffect, transform.position, Quaternion.identity);
