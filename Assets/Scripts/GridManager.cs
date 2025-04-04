@@ -163,5 +163,21 @@ public class GridManager
             gridItems[pos.x, pos.y] = item;
         }
     }
+    public List<GridItem> GetAllItems()
+    {
+        List<GridItem> items = new List<GridItem>();
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                if (gridItems[x, y] != null)
+                {
+                    items.Add(gridItems[x, y]);
+                }
+            }
+        }
+        return items;
+    }
+
     
 }

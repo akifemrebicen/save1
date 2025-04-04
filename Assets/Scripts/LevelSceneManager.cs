@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using DG.Tweening;  // Make sure you have DOTween imported
 
 public class LevelSceneManager : MonoBehaviour
 {
@@ -19,10 +20,19 @@ public class LevelSceneManager : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float gravityFallSpeed = 5.0f;
 
+    [Header("Rocket Prefabs")]
+    [SerializeField] private GameObject verticalRocketPrefab;
+    [SerializeField] private GameObject horizontalRocketPrefab;
+    [SerializeField] private GameObject verticalUpHalfPrefab;
+    [SerializeField] private GameObject verticalDownHalfPrefab;
+    [SerializeField] private GameObject horizontalLeftHalfPrefab;
+    [SerializeField] private GameObject horizontalRightHalfPrefab;
+
     private GridManager gridManager;
     private GravityController gravityController;
     private BlastController blastController;
-    private SpawnController spawnController;  // SpawnController referansı
+    private SpawnController spawnController;
+    private RocketManager rocketManager;
 
     private int gridWidth;
     private int gridHeight;
@@ -41,10 +51,11 @@ public class LevelSceneManager : MonoBehaviour
         gridWidth = data.grid_width;
         gridHeight = data.grid_height;
 
+        // Resize the background
         var resizer = new GridBackgroundResizer(backgroundRect, cellSize, padding);
         resizer.Resize(gridWidth, gridHeight);
 
-        // GridManager'ı başlat
+        // Initialize the GridManager and create the grid
         gridManager = new GridManager(
             cubePrefabs,
             boxPrefab,
@@ -57,20 +68,28 @@ public class LevelSceneManager : MonoBehaviour
         );
         gridManager.CreateGrid(data);
 
-        // SpawnController'ı başlat
+        // Initialize the SpawnController
         spawnController = new SpawnController(gridManager, cubePrefabs, gridParent);
 
-        // Diğer kontrolcüleri başlat
+        // Initialize the other controllers
         blastController = new BlastController(gridManager);
         gravityController = new GravityController(gridManager);
-
-        // Kontrolcüler arası bağlantıları kur
         gravityController.SetBlastController(blastController);
-        // Başlangıçta ipuçlarını göster
+
+        // Initialize the RocketManager with rocket prefab references
+        rocketManager = new RocketManager(
+            verticalRocketPrefab,
+            horizontalRocketPrefab,
+            verticalUpHalfPrefab,
+            verticalDownHalfPrefab,
+            horizontalLeftHalfPrefab,
+            horizontalRightHalfPrefab,
+            gridManager,
+            gridParent
+        );
+
+        // Show initial hints (highlight groups of 4+ cubes)
         blastController.CheckAndHintGroups();
-        
-        // İlk grid durumunu logla
-        //LogGridState("Initial Grid State:");
     }
 
     private void Update()
@@ -82,16 +101,23 @@ public class LevelSceneManager : MonoBehaviour
 
             if (hit.collider != null)
             {
-                Cube cube = hit.collider.GetComponent<Cube>();
-                if (cube != null)
+                // Check if we tapped a Cube
+                Cube tappedCube = hit.collider.GetComponent<Cube>();
+                if (tappedCube != null)
                 {
-                    // Bağlantılı küpleri bul (BlastController kullanarak)
-                    var connectedCubes = blastController.FindConnectedCubes(cube);
-                    var color = cube.GetColor();
-                    Debug.Log($"Tapped color = {color}");
-                    if (connectedCubes.Count >= 2)
+                    var connectedCubes = blastController.FindConnectedCubes(tappedCube);
+                    // If we have at least 4 cubes in the group, animate them into a rocket
+                    if (connectedCubes.Count >= 4)
                     {
-                        
+                        // Start a coroutine that:
+                        // 1) Animates all cubes to the tapped cell
+                        // 2) Destroys them
+                        // 3) Spawns a rocket at that cell
+                        // 4) Applies gravity & spawns new cubes
+                        StartCoroutine(AnimateGroupAndCreateRocket(connectedCubes, tappedCube.GridPosition));
+                    }
+                    else
+                    {
                         // Patlama öncesi grid durumunu logla
                         //LogGridState("Before Explosion:");
 
@@ -116,11 +142,20 @@ public class LevelSceneManager : MonoBehaviour
                         StartCoroutine(CheckHintsAfterDelay());
                     }
                 }
+                else
+                {
+                    // If it's not a cube, check if it's a rocket
+                    Rocket rocket = hit.collider.GetComponent<Rocket>();
+                    if (rocket != null)
+                    {
+                        Debug.Log("Rocket tapped!");
+                        rocket.OnTapped();  // Rocket splits
+                        gridManager.RemoveGridItemAt(rocket.GridPosition);
+                    }
+                }
             }
         }
     }
-
-    // Yeni bir coroutine ekleyin - bu sadece ipuçları için biraz gecikme ekler
     private IEnumerator CheckHintsAfterDelay()
     {
         // Tüm düşme animasyonlarının bitmesi için yeterli süre bekleyin
@@ -131,11 +166,80 @@ public class LevelSceneManager : MonoBehaviour
         blastController.CheckAndHintGroups();
     }
 
-    // Grid'in mevcut durumunu loglayan yardımcı metod
+    /// <summary>
+    /// Coroutine that:
+    /// 1) Animates all cubes in 'group' to the 'rocketPos' cell
+    /// 2) Scales them slightly and destroys them
+    /// 3) Creates a rocket in that cell
+    /// 4) Applies gravity
+    /// 5) Spawns new cubes
+    /// 6) Checks for hints after a short delay
+    /// </summary>
+    private IEnumerator AnimateGroupAndCreateRocket(System.Collections.Generic.List<Cube> group, Vector2Int rocketPos)
+    {
+        // Convert rocketPos (grid coords) to world coords
+        Vector3 rocketWorldPos = gridManager.GetWorldPosition(rocketPos);
+
+        // We can animate all cubes simultaneously in a single DOTween Sequence
+        Sequence seq = DOTween.Sequence();
+
+        // 1) Animate each cube to the rocketWorldPos
+        foreach (var cube in group)
+        {
+            // Join each cube's movement to the main sequence
+            seq.Join(
+                cube.transform.DOMove(rocketWorldPos, 0.3f)
+                              .SetEase(Ease.InQuad)
+            );
+        }
+
+        // 2) After they've arrived, scale them down a bit before destroying
+        //    We can add a small AppendInterval to ensure they've reached the rocketWorldPos
+        seq.AppendInterval(0.1f);
+
+        // Now scale them all to 0.8 in 0.1s
+        foreach (var cube in group)
+        {
+            seq.Join(
+                cube.transform.DOScale(0.8f, 0.1f)
+            );
+        }
+
+        // 3) After the scale, destroy them
+        seq.OnComplete(() =>
+        {
+            // Remove cubes from the grid & destroy
+            foreach (var c in group)
+            {
+                gridManager.RemoveGridItemAt(c.GridPosition);
+                Destroy(c.gameObject);
+            }
+        });
+
+        // Wait for sequence to finish
+        yield return seq.WaitForCompletion();
+
+        // 4) Create a rocket in that cell. Random direction:
+        Rocket.RocketDirection direction = (Random.value < 0.5f)
+            ? Rocket.RocketDirection.Vertical
+            : Rocket.RocketDirection.Horizontal;
+        rocketManager.CreateRocket(rocketPos, direction);
+
+        // 5) Apply gravity
+        gravityController.ApplyGravity(gravityFallSpeed);
+
+        // 6) Spawn new cubes
+        spawnController.SpawnNewCubes();
+
+        // 7) Check hints after a short delay
+        yield return new WaitForSeconds(Mathf.Max(gravityFallSpeed, 1.0f) + 0.2f);
+        blastController.CheckAndHintGroups();
+    }
+
+    // (Optional) Log the grid state for debugging
     private void LogGridState(string message)
     {
         Debug.Log(message);
-
         for (int y = 0; y < gridManager.GridHeight; y++)
         {
             string rowLog = "";
