@@ -316,9 +316,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cubePrefabs:
-  - {fileID: 1508159002118505262, guid: fb5110e60f5fa4ce89abd84fb74bd4b7, type: 3}
-  - {fileID: 559393411199329006, guid: be1bcdf81d4ec4cb08613d37a959285e, type: 3}
   - {fileID: 4355245767489075705, guid: 3799738b9472545818176b1393387f6a, type: 3}
+  - {fileID: 559393411199329006, guid: be1bcdf81d4ec4cb08613d37a959285e, type: 3}
+  - {fileID: 1508159002118505262, guid: fb5110e60f5fa4ce89abd84fb74bd4b7, type: 3}
   - {fileID: 8206551141748114845, guid: f27d86d7746aa493d9836bcac864ed97, type: 3}
   boxPrefab: {fileID: 8958590079938864126, guid: 8d0ebfce54b824ce48d308d6d7e6bcd1, type: 3}
   stonePrefab: {fileID: 929045266676241240, guid: 02fd86c0c97934e5cab385549b4b112d, type: 3}
@@ -328,6 +328,13 @@ MonoBehaviour:
   cellSize: 100
   cellSpacing: 6
   padding: 48
+  gravityFallSpeed: 5
+  verticalRocketPrefab: {fileID: 1950232443812599345, guid: 5e382bff3878e4841b6ca36d4753eaac, type: 3}
+  horizontalRocketPrefab: {fileID: 4667648617514403623, guid: 94ce61dc23b395344adf427af3fedd1a, type: 3}
+  verticalUpHalfPrefab: {fileID: 3541313967601331277, guid: 643416b9d6d609245ace7858a437cc22, type: 3}
+  verticalDownHalfPrefab: {fileID: 2909989714003023218, guid: 6fa986b9da532d446ac1071b0da650f3, type: 3}
+  horizontalLeftHalfPrefab: {fileID: 1637748030631344644, guid: a8bdd1aa33661af4cb911e15852a93d9, type: 3}
+  horizontalRightHalfPrefab: {fileID: 6885101642490007670, guid: a26381cd407ab014f9436f64d2cd1c04, type: 3}
 --- !u!4 &504443441
 Transform:
   m_ObjectHideFlags: 0

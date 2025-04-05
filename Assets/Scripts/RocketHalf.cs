@@ -1,127 +1,111 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using DG.Tweening;
-using System.Collections;
 
 public class RocketHalf : GridItem
 {
-    private Vector2Int moveDirection;   // Örneğin (1,0) veya (0,1)
+    // Grid yönünde hareket (örneğin, yukarı için Vector2Int.up, aşağı için Vector2Int.down)
+    private Vector2Int moveDirection;
     private GridManager gridManager;
-    private float moveSpeed = 10f;        // Hareket hızı
+    private float stepDuration = 0.1f; // Her hücreye geçiş süresi (ayarlanabilir)
 
-    // Discrete grid takibi için:
-    private Vector2Int startGridPos;      // Oluşturulduğu anki grid pozisyonu
-    private Vector3 startWorldPos;        // Oluşturulduğu anki world pozisyonu
-    private Vector2 cellProgress;         // Hücre içerisindeki geçiş miktarı (birikimli)
-
-    // Explosion sadece bir kez tetiklensin:
-    private bool explosionTriggered = false;
-
-    public override bool CanFall => true;
+    // Mevcut grid pozisyonu
+    private Vector2Int currentGridPos;
 
     /// <summary>
-    /// Half rocket'ı başlatır.
+    /// Roket yarısını başlatır.
     /// </summary>
-    /// <param name="direction">Hareket yönü (örn: Vector2Int.up veya Vector2Int.right)</param>
+    /// <param name="direction">Grid yönünde hareket (örneğin, Vector2Int.up)</param>
     /// <param name="manager">GridManager referansı</param>
-    /// <param name="initialGridPos">Half rocket'ın oluşturulduğu grid pozisyonu</param>
+    /// <param name="initialGridPos">Başlangıç grid pozisyonu</param>
     public void Initialize(Vector2Int direction, GridManager manager, Vector2Int initialGridPos)
     {
         moveDirection = direction;
         gridManager = manager;
-        startGridPos = initialGridPos;
-        startWorldPos = transform.position;
-        cellProgress = Vector2.zero;
+        currentGridPos = initialGridPos;
         GridPosition = initialGridPos;
-        explosionTriggered = false;
+        // Başlangıç world pozisyonunu grid pozisyonundan hesapla
+        transform.position = gridManager.GetWorldPosition(initialGridPos);
+        // Grid adımlı hareketi başlatan coroutine
+        StartCoroutine(GridMovementRoutine());
     }
 
-    private void Update()
+    private IEnumerator GridMovementRoutine()
     {
-        // Hareketi world space'de uygula.
-        Vector3 moveVec = new Vector3(moveDirection.x, moveDirection.y, 0f) * (moveSpeed * Time.deltaTime);
-        transform.Translate(moveVec);
-
-        // Hücre bazında hareketi biriktir.
-        float cellSize = gridManager.CellSize;
-        cellProgress.x += moveVec.x / cellSize;
-        cellProgress.y += moveVec.y / cellSize;
-        Vector2Int deltaGrid = new Vector2Int(Mathf.FloorToInt(cellProgress.x), Mathf.FloorToInt(cellProgress.y));
-        cellProgress.x -= deltaGrid.x;
-        cellProgress.y -= deltaGrid.y;
-        Vector2Int currentGridPos = startGridPos + deltaGrid;
-        GridPosition = currentGridPos;
-
-        // Explosion yalnızca bir kez tetiklensin:
-        if (!explosionTriggered)
+        while (true)
         {
-            explosionTriggered = true;
-            // Eğer horizontal ise, hem sola hem sağa blast; vertical ise, hem yukarı hem aşağı blast edelim.
-            if (moveDirection.x != 0)
-            {
-                StartCoroutine(BlastRowFromCenter(currentGridPos));
-            }
-            else if (moveDirection.y != 0)
-            {
-                StartCoroutine(BlastColumnFromCenter(currentGridPos));
-            }
-            // Explosion tamamlandıktan sonra half rocket'ı kısa delay ile yok edelim.
-            Destroy(gameObject, 0.5f);
-        }
+            // Bir sonraki grid hücresini hesapla
+            Vector2Int nextGridPos = currentGridPos + moveDirection;
 
-        CheckAndDestroyOutOfBounds();
-    }
+            // Eğer grid sınırlarının dışına çıktıysa roketi yok et (bu kontrol isteğe bağlı)
+            if (nextGridPos.x < 0 || nextGridPos.x >= gridManager.GridWidth ||
+                nextGridPos.y < 0 || nextGridPos.y >= gridManager.GridHeight)
+            {
+                // Alternatif olarak, ekran dışı kontrolü aşağıda yapılacak
+                break;
+            }
 
-    // Belirtilen center hücresinden başlayarak, hem sola hem sağa doğru patlama yapar.
-    private IEnumerator BlastRowFromCenter(Vector2Int center)
-    {
-        // Önce center hücresindeki öğeyi patlat.
-        BlastGridItemAt(center);
-        yield return new WaitForSeconds(0.05f);
-        // Sola ve sağa doğru blast.
-        int offset = 1;
-        while ((center.x - offset >= 0) || (center.x + offset < gridManager.GridWidth))
-        {
-            if (center.x - offset >= 0)
+            // Hedef world pozisyonu, grid hücresinden hesaplanır
+            Vector3 targetWorldPos = gridManager.GetWorldPosition(nextGridPos);
+
+            // Mevcut world pozisyonundan hedefe animasyonlu geçiş yap
+            yield return transform.DOMove(targetWorldPos, stepDuration).WaitForCompletion();
+
+            // Yeni grid pozisyonuna geçtiğimizde güncelle
+            currentGridPos = nextGridPos;
+            GridPosition = nextGridPos;
+
+            // Eğer bu grid hücresinde bir Cube varsa, explosion animasyonunu tetikle
+            GridItem item = gridManager.GetGridItemAt(nextGridPos);
+            if (item != null && item is Cube)
             {
-                BlastGridItemAt(new Vector2Int(center.x - offset, center.y));
+                BlastGridItemAt(nextGridPos);
             }
-            if (center.x + offset < gridManager.GridWidth)
+
+            // Ekran dışı kontrolü: Roket parçasının world konumunu kameranın viewport’una çeviriyoruz.
+            Vector3 viewportPos = Camera.main.WorldToViewportPoint(transform.position);
+            if (viewportPos.x < 0 || viewportPos.x > 1 || viewportPos.y < 0 || viewportPos.y > 1)
             {
-                BlastGridItemAt(new Vector2Int(center.x + offset, center.y));
+                // Ekrandan çıkıyorsa, kendisini patlatacak animasyon oynat ve destroy et
+                Sequence selfExplosionSeq = DOTween.Sequence();
+                selfExplosionSeq.Append(transform.DOScale(1.2f, 0.1f).SetEase(Ease.OutBounce));
+                selfExplosionSeq.Append(transform.DOScale(0f, 0.1f).SetEase(Ease.InBack));
+                selfExplosionSeq.OnComplete(() => { Destroy(gameObject); });
+                yield break;
             }
-            offset++;
+
+            // Her adım arasında kısa bir gecikme (isteğe bağlı)
             yield return new WaitForSeconds(0.05f);
         }
-    }
 
-    // Belirtilen center hücresinden başlayarak, hem yukarı hem aşağı blast yapar.
-    private IEnumerator BlastColumnFromCenter(Vector2Int center)
-    {
-        BlastGridItemAt(center);
-        yield return new WaitForSeconds(0.05f);
-        int offset = 1;
-        while ((center.y - offset >= 0) || (center.y + offset < gridManager.GridHeight))
+        // Eğer grid sınırlarının dışına çıkarsa da ekran kontrolü ile aynı işlemi yapalım:
+        Vector3 finalViewportPos = Camera.main.WorldToViewportPoint(transform.position);
+        if (finalViewportPos.x < 0 || finalViewportPos.x > 1 || finalViewportPos.y < 0 || finalViewportPos.y > 1)
         {
-            if (center.y - offset >= 0)
-            {
-                BlastGridItemAt(new Vector2Int(center.x, center.y - offset));
-            }
-            if (center.y + offset < gridManager.GridHeight)
-            {
-                BlastGridItemAt(new Vector2Int(center.x, center.y + offset));
-            }
-            offset++;
-            yield return new WaitForSeconds(0.05f);
+            Sequence seq = DOTween.Sequence();
+            seq.Append(transform.DOScale(1.2f, 0.1f).SetEase(Ease.OutBounce));
+            seq.Append(transform.DOScale(0f, 0.1f).SetEase(Ease.InBack));
+            seq.OnComplete(() => { Destroy(gameObject); });
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
+    /// <summary>
+    /// Belirtilen grid hücresindeki Cube için explosion animasyonu uygular.
+    /// </summary>
+    /// <param name="pos">Grid pozisyonu</param>
     private void BlastGridItemAt(Vector2Int pos)
     {
         GridItem item = gridManager.GetGridItemAt(pos);
-        if (item != null && !(item is Rocket))
+        if (item != null && item is Cube)
         {
-            // Uygun animasyonla patlat.
-            item.transform.DOScale(0.8f, 0.1f).OnComplete(() =>
+            Sequence seq = DOTween.Sequence();
+            seq.Append(item.transform.DOScale(1.2f, 0.1f).SetEase(Ease.OutBounce));
+            seq.Append(item.transform.DOScale(0f, 0.1f).SetEase(Ease.InBack));
+            seq.OnComplete(() =>
             {
                 gridManager.RemoveGridItemAt(pos);
                 Destroy(item.gameObject);
@@ -129,17 +113,16 @@ public class RocketHalf : GridItem
         }
     }
 
-    private void CheckAndDestroyOutOfBounds()
-    {
-        Vector3 viewportPos = Camera.main.WorldToViewportPoint(transform.position);
-        if (viewportPos.x < 0 || viewportPos.x > 1 || viewportPos.y < 0 || viewportPos.y > 1)
-        {
-            Destroy(gameObject);
-        }
-    }
+    public override bool CanFall => true;
 
     public override void OnTapped()
     {
         Destroy(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        if (LevelSceneManager.Instance != null)
+            LevelSceneManager.Instance.RocketHalfDestroyed();
     }
 }

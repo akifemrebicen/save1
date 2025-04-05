@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections;
-using DG.Tweening;  // Make sure you have DOTween imported
+using DG.Tweening;
 
 public class LevelSceneManager : MonoBehaviour
 {
@@ -121,7 +121,7 @@ public class LevelSceneManager : MonoBehaviour
                     }
                     else
                     {
-                        
+                        // Küçük grup için işlem yapılmıyor.
                     }
                 }
                 else
@@ -202,5 +202,12 @@ public class LevelSceneManager : MonoBehaviour
         Debug.Log($"Rocket created at {rocketPos}");
 
         TriggerPostExplosion();
+    }
+
+    // Yarım roket (RocketHalf) yok edildiğinde çağrılacak metot.
+    public void RocketHalfDestroyed()
+    {
+        Debug.Log("A rocket half has been destroyed.");
+        // İhtiyaca göre ek işlemler yapılabilir.
     }
 }

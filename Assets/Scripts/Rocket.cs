@@ -29,7 +29,7 @@ public class Rocket : GridItem
         SplitRocket(existingItems);
 
         // Patlama sonrası işlemleri, 0.5 sn delay ile tetikleyelim.
-        LevelSceneManager.Instance.TriggerPostExplosionDelayed(0.5f);
+        LevelSceneManager.Instance.TriggerPostExplosionDelayed(1.5f);
     }
 
     private void SplitRocket(HashSet<GridItem> existingItems)
