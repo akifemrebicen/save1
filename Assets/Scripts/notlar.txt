@@ -1,0 +1,7 @@
+﻿şu an en son roketlerin patlamasını düzelttim ama bu sefer de teker teker animasyon yok henüz onu ekleyeceğim 
+ayrıca roket combosu ve bir roketin patlamasının diğer roketi etkilemesi de yok
+obstacle roket ilişkileri ve blastların obstaclelara hasar vermesi yok
+win show animationlar yok
+count mantığı dynamic goallar yok
+bu kadar
+ve butonu ayarlamadım main menude

@@ -8,30 +8,28 @@ public class Rocket : GridItem
     private RocketDirection direction;
     private GridManager gridManager;
     private Transform gridParent;
-    private bool hasBeenTapped = false; // Tekrar tıklamayı engellemek için
 
     public override bool CanFall => true;
 
-    public void Initialize(RocketDirection rocketDirection, GridManager manager, Transform parent)
+    // Grid pozisyonunu da alıyoruz.
+    public void Initialize(RocketDirection rocketDirection, GridManager manager, Transform parent, Vector2Int gridPos)
     {
         direction = rocketDirection;
         gridManager = manager;
         gridParent = parent;
+        GridPosition = gridPos; // Roketin grid pozisyonunu atıyoruz.
     }
 
     public override void OnTapped()
     {
-        if (hasBeenTapped)
-            return; // Zaten işlemdeyse tekrar işlem yapma
-        
-        hasBeenTapped = true;
-
-        // Mevcut grid'deki tüm item'ları snapshot olarak alıyoruz.
+        Debug.Log($"Rocket tapped at grid position: {GridPosition}");
         List<GridItem> currentItems = gridManager.GetAllItems();
         HashSet<GridItem> existingItems = new HashSet<GridItem>(currentItems);
 
-        // Normal bölünmeyi gerçekleştiriyoruz (combo logic varsa onu buraya ekleyebilirsiniz).
         SplitRocket(existingItems);
+
+        // Patlama sonrası işlemleri, 0.5 sn delay ile tetikleyelim.
+        LevelSceneManager.Instance.TriggerPostExplosionDelayed(0.5f);
     }
 
     private void SplitRocket(HashSet<GridItem> existingItems)
@@ -45,9 +43,8 @@ public class Rocket : GridItem
             CreateRocketHalf(moveDir, existingItems);
         }
 
-        // Grid'den bu rocket'i kaldır ve yok et.
         gridManager.RemoveGridItemAt(GridPosition);
-        Destroy(gameObject);
+        Destroy(gameObject, 0.1f);
     }
 
     private void CreateRocketHalf(Vector2Int moveDir, HashSet<GridItem> existingItems)

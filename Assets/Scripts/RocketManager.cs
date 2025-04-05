@@ -3,14 +3,11 @@ using System.Collections.Generic;
 
 public class RocketManager
 {
-    // Static instance for easy access from Rocket.cs.
     public static RocketManager Instance { get; private set; }
 
-    // Full rocket prefabs.
     private GameObject verticalRocketPrefab;
     private GameObject horizontalRocketPrefab;
 
-    // Rocket half prefabs.
     private GameObject verticalUpHalfPrefab;
     private GameObject verticalDownHalfPrefab;
     private GameObject horizontalLeftHalfPrefab;
@@ -19,7 +16,6 @@ public class RocketManager
     private GridManager gridManager;
     private Transform gridParent;
 
-    // Constructor: All prefab references and dependencies are provided from LevelSceneManager.
     public RocketManager(
         GameObject verticalRocketPrefab,
         GameObject horizontalRocketPrefab,
@@ -39,13 +35,12 @@ public class RocketManager
         this.gridManager = gridManager;
         this.gridParent = gridParent;
 
-        // Set the static instance for access from other classes.
         Instance = this;
     }
 
-    // Creates a full rocket at a given grid position with the specified direction.
     public void CreateRocket(Vector2Int gridPos, Rocket.RocketDirection direction)
     {
+        Debug.Log($"Created rocket at {gridPos}");
         GameObject prefab = (direction == Rocket.RocketDirection.Vertical)
             ? verticalRocketPrefab
             : horizontalRocketPrefab;
@@ -55,15 +50,14 @@ public class RocketManager
         Rocket rocket = rocketGO.GetComponent<Rocket>();
         if (rocket != null)
         {
-            rocket.Initialize(direction, gridManager, gridParent);
+            rocket.Initialize(direction, gridManager, gridParent, gridPos);
             gridManager.SetGridItemAt(gridPos, rocket);
         }
     }
 
-    // Creates a rocket half at a given grid position and movement direction,
-    // and passes the snapshot of existing items to the half.
     public void CreateRocketHalf(Vector2Int gridPos, Vector2Int moveDirection, HashSet<GridItem> existingItems)
     {
+        Debug.Log($"Created rocket half at {gridPos} moving {moveDirection}");
         GameObject prefab = GetRocketHalfPrefab(moveDirection);
         if (prefab == null)
             return;
@@ -73,11 +67,10 @@ public class RocketManager
         RocketHalf half = halfGO.GetComponent<RocketHalf>();
         if (half != null)
         {
-            half.Initialize(moveDirection, gridManager, existingItems);
+            half.Initialize(moveDirection, gridManager, gridPos);
         }
     }
 
-    // Returns the correct half prefab based on the move direction.
     private GameObject GetRocketHalfPrefab(Vector2Int moveDirection)
     {
         if (moveDirection == Vector2Int.up)
